@@ -1,0 +1,8 @@
+.venv/
+.pytest_cache/
+**/node_modules/
+**/dist/
+**/package-lock.json
+**/__pycache__/
+assets/
+LICENSE

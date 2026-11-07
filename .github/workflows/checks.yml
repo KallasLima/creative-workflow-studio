@@ -1,0 +1,27 @@
+name: Checks
+on:
+  push:
+  pull_request:
+permissions:
+  contents: read
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v7.0.1
+      - uses: actions/setup-node@v7.1.0
+        with:
+          node-version: 24.22.2
+      - uses: actions/setup-python@v7.1.0
+        with:
+          python-version: "3.12"
+      - run: python -m pip install --upgrade pip
+      - run: python -m pip install -r project/poc/backend/requirements.txt pip-audit
+      - run: python -m pytest
+      - run: python -m pip_audit --progress-spinner off
+      - run: npm ci
+        working-directory: project/poc/frontend
+      - run: npm run build && npm run smoke && npm audit --audit-level=moderate
+        working-directory: project/poc/frontend
+      - run: node project/poc/frontend/node_modules/prettier/bin/prettier.cjs --check .
